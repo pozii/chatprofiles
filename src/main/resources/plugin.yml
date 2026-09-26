@@ -1,0 +1,22 @@
+name: ChatProfiles
+version: 1.0.0
+main: com.pozii.chatprofiles.ChatProfiles
+api-version: '1.13'
+authors: [pozii]
+description: Persistent per-player chat history with report snapshots and txt export.
+website: https://github.com/pozii/chat-profiles
+commands:
+  chatprofile:
+    description: View, export or clear a player's chat history.
+    usage: /chatprofile <player> [page] | /chatprofile export <player> | /chatprofile clear <player>
+    permission: chatprofiles.view
+permissions:
+  chatprofiles.view:
+    description: View chat history pages.
+    default: op
+  chatprofiles.export:
+    description: Export chat history to txt.
+    default: op
+  chatprofiles.clear:
+    description: Delete a player's chat history.
+    default: op

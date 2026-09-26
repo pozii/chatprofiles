@@ -1,0 +1,11 @@
+ChatProfiles
+/target/
+/.classpath
+/.project
+/.settings/
+/bin/
+*.class
+*.jar
+*.iml
+.idea/
+.vscode/

@@ -1,0 +1,44 @@
+# ChatProfiles configuration.
+# All times are in server local time. History is stored in SQLite.
+
+storage:
+  # Database file relative to the plugin data folder.
+  file: "messages.db"
+
+# Write pipeline tuning. Chat events are never written on the event thread.
+# They are queued in memory and flushed in batches by a single writer thread.
+pipeline:
+  # Maximum queued messages before the oldest are dropped (protects against OOM during raids).
+  queue-capacity: 20000
+  # Flush interval in seconds.
+  batch-interval-seconds: 5
+  # Maximum rows per flush transaction.
+  batch-size: 500
+
+# Retention of the rolling log. A report snapshot is NOT affected by these limits.
+retention:
+  # Maximum stored messages per player.
+  max-messages-per-player: 1000
+  # Maximum age in days. Older rows are purged.
+  retention-days: 60
+  # How often the purge task runs, in hours.
+  purge-interval-hours: 24
+
+# Fast in-memory cache used by the view command. Never blocks on disk.
+cache:
+  # Recent messages kept per player in memory.
+  size-per-player: 50
+  # Maximum number of cached players before eviction kicks in.
+  max-cached-players: 10000
+
+view:
+  # Messages per page in the view command.
+  page-size: 10
+
+export:
+  # Rows read per DB round-trip while writing the txt file.
+  batch-size: 500
+
+# Messages shorter than this (after trim) are ignored. 0 disables the filter.
+filters:
+  min-length: 1

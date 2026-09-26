@@ -1,0 +1,48 @@
+name: Auto release
+
+# On every push to main, compares the pom version against existing tags.
+# If the version is new, it builds the jar and opens a GitHub Release
+# with auto-generated notes. No manual tagging needed: bump the version
+# in pom.xml, push, and the release appears by itself.
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+      - name: Read pom version
+        id: version
+        run: echo "version=$(mvn -B -q help:evaluate -Dexpression=project.version -DforceStdout)" >> "$GITHUB_OUTPUT"
+      - name: Check if tag already exists
+        id: check
+        run: |
+          if git rev-parse "v${{ steps.version.outputs.version }}" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Build
+        if: steps.check.outputs.exists == 'false'
+        run: mvn -B clean package
+      - name: Publish release
+        if: steps.check.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: ChatProfiles v${{ steps.version.outputs.version }}
+          generate_release_notes: true
+          files: target/ChatProfiles-*.jar
